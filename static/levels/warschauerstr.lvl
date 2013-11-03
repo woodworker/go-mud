@@ -1,0 +1,7 @@
+<station key="warschauerstr">
+    <name>Warschauer Straße</name>
+    <directions>
+        <direction station="ostbahnhof">West</direction>
+        <direction station="ostkreuz">East</direction>
+    </directions>
+</station>

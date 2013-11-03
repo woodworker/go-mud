@@ -1,0 +1,10 @@
+<station key="ostkreuz">
+    <name>Ostkreuz</name>
+    <directions>
+        <direction station="warschauerstr">West</direction>
+        <direction station="treptowerpark">South</direction>
+        <direction station="frankfurterallee">North</direction>
+        <direction station="rummelsburg">Southeast</direction>
+        <direction station="noeldnerplatz">Northeast</direction>
+    </directions>
+</station>

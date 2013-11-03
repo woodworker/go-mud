@@ -1,0 +1,6 @@
+<station key="noeldnerplatz">
+    <name>Nöldner Platz</name>
+    <directions>
+        <direction station="ostkreuz">East</direction>
+    </directions>
+</station>

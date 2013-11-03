@@ -1,0 +1,6 @@
+<station key="treptowerpark">
+    <name>Treptower Park</name>
+    <directions>
+        <direction station="ostkreuz">North</direction>
+    </directions>
+</station>
