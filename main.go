@@ -78,13 +78,14 @@ func (c Client) ReadLinesInto(ch chan <- string, server *game.Server) {
 		log.Printf("Command: %s  -  %s", command, commandText)
 
 		switch command {
+		case "look": fallthrough
 		case "watch":
 			place, ok := server.GetRoom(c.player.Position)
 			if ok {
 				io.WriteString(c.conn, fmt.Sprintf("You are at \033[1;30;41m%s\033[0m\n\r", place.Name))
 				for _,oneDirection := range place.Directions {
 					place, ok := server.GetRoom(oneDirection.Station)
-					if ok {
+					if ok && ((oneDirection.Hidden == "" && commandText == "") || strings.ToLower(oneDirection.Direction) == strings.ToLower(commandText)) {
 						io.WriteString(c.conn, fmt.Sprintf("When you look %s you see %s\n\r", oneDirection.Direction, place.Name))
 					}
 				}
@@ -93,10 +94,13 @@ func (c Client) ReadLinesInto(ch chan <- string, server *game.Server) {
 			place, ok := server.GetRoom(c.player.Position)
 			if ok {
 				for _,oneDirection := range place.Directions {
-					if(oneDirection.Direction == commandText){
+					if(strings.ToLower(oneDirection.Direction) == strings.ToLower(commandText)){
 						place, ok := server.GetRoom(oneDirection.Station)
 						if ok {
 							io.WriteString(c.conn, fmt.Sprintf("You are now at \033[1;30;41m%s\033[0m\n\r", place.Name))
+							if place.Intro !="" {
+								io.WriteString(c.conn, fmt.Sprintf(" > %s\n\r", place.Intro))
+							}
 							c.player.Position = place.Key
 							server.SavePlayer(c.player)
 						}
