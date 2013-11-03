@@ -1,0 +1,6 @@
+<station key="jannowitzbruecke">
+    <name>Jannowitzbrücke</name>
+    <directions>
+        <direction station="alex">West</direction>
+    </directions>
+</station>
