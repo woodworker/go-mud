@@ -13,8 +13,8 @@ import (
 
 type Client struct {
 	conn     	 net.Conn
-	nickname	  string
-	player		game.Player
+	nickname	 string
+	player		 game.Player
 	ch       	 chan string
 }
 
@@ -64,7 +64,7 @@ func (c Client) ReadLinesInto(ch chan <- string, server *game.Server) {
 			continue
 		}
 
-		io.WriteString(c.conn, fmt.Sprintf("You wrote: %s\n\r", userLine))
+		//io.WriteString(c.conn, fmt.Sprintf("You wrote: %s\n\r", userLine))
 		lineParts := strings.SplitN(userLine, " ", 2)
 
 		var command, commandText string
@@ -81,7 +81,27 @@ func (c Client) ReadLinesInto(ch chan <- string, server *game.Server) {
 		case "watch":
 			place, ok := server.GetRoom(c.player.Position)
 			if ok {
-				io.WriteString(c.conn, fmt.Sprintf("You are at %s\n\r", place.Name))
+				io.WriteString(c.conn, fmt.Sprintf("You are at \033[1;30;41m%s\033[0m\n\r", place.Name))
+				for _,oneDirection := range place.Directions {
+					place, ok := server.GetRoom(oneDirection.Station)
+					if ok {
+						io.WriteString(c.conn, fmt.Sprintf("When you look %s you see %s\n\r", oneDirection.Direction, place.Name))
+					}
+				}
+			}
+		case "go":
+			place, ok := server.GetRoom(c.player.Position)
+			if ok {
+				for _,oneDirection := range place.Directions {
+					if(oneDirection.Direction == commandText){
+						place, ok := server.GetRoom(oneDirection.Station)
+						if ok {
+							io.WriteString(c.conn, fmt.Sprintf("You are now at \033[1;30;41m%s\033[0m\n\r", place.Name))
+							c.player.Position = place.Key
+							server.SavePlayer(c.player)
+						}
+					}
+				}
 			}
 		case "say":
 			ch <- fmt.Sprintf("%s: %s", c.player.Gamename, commandText)

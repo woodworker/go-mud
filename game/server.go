@@ -55,8 +55,12 @@ func (s *Server) LoadLevels() error {
 	return nil
 }
 
+func (s *Server) getPlayerFileName(playerName string) string {
+	return s.workingdir+"/static/player/"+playerName+".player"
+}
+
 func (s *Server) LoadPlayer(playerName string) bool {
-	playerFileName := s.workingdir+"/static/player/"+playerName+".player"
+	playerFileName := s.getPlayerFileName(playerName)
 
 	log.Println("Loading player %s", playerFileName)
 
@@ -107,4 +111,13 @@ func (s *Server) GetName() string {
 	return s.name
 }
 
-
+func (s *Server) SavePlayer(player Player) (bool) {
+	data, err := xml.Marshal(player)
+	if err == nil {
+		playerFileName := s.getPlayerFileName(player.Nickname)
+		if ioerror := ioutil.WriteFile(playerFileName, data, 0666); ioerror != nil {
+			return true
+		}
+	}
+	return false
+}
