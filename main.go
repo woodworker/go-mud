@@ -12,21 +12,20 @@ import (
 )
 
 type Client struct {
-	conn     	net.Conn
-	nickname	string
+	conn     	 net.Conn
+	nickname	  string
 	player		game.Player
-	ch       	chan string
+	ch       	 chan string
 }
 
 func main() {
 	workingdir, _ := os.Getwd()
 
-	log.Printf("Leveldir %s", workingdir+"/static/levels/")
+	log.Printf("Leveldir %s", workingdir + "/static/levels/")
 
 	server := game.NewServer("berlin-mud", workingdir)
 	server.LoadLevels()
 	log.Printf("%v", server)
-
 
 	ln, err := net.Listen("tcp", ":1337")
 	if err != nil {
@@ -51,14 +50,42 @@ func main() {
 	}
 }
 
-func (c Client) ReadLinesInto(ch chan<- string) {
+func (c Client) ReadLinesInto(ch chan <- string, server *game.Server) {
 	bufc := bufio.NewReader(c.conn)
 	for {
 		line, err := bufc.ReadString('\n')
 		if err != nil {
 			break
 		}
-		ch <- fmt.Sprintf("%s: %s", c.player.Gamename, line)
+
+		userLine := strings.TrimSpace(line)
+
+		if(userLine==""){
+			continue
+		}
+
+		io.WriteString(c.conn, fmt.Sprintf("You wrote: %s\n\r", userLine))
+		lineParts := strings.SplitN(userLine, " ", 2)
+
+		var command, commandText string
+		if(len(lineParts)>0){
+			command = lineParts[0]
+		}
+		if(len(lineParts)>1){
+			commandText = lineParts[1]
+		}
+
+		log.Printf("Command: %s  -  %s", command, commandText)
+
+		switch command {
+		case "watch":
+			place, ok := server.GetRoom(c.player.Position)
+			if ok {
+				io.WriteString(c.conn, fmt.Sprintf("You are at %s\n\r", place.Name))
+			}
+		case "say":
+			ch <- fmt.Sprintf("%s: %s", c.player.Gamename, commandText)
+		}
 	}
 }
 
@@ -77,7 +104,7 @@ func promptNick(c net.Conn, bufc *bufio.Reader) string {
 	return string(nick)
 }
 
-func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- Client, rmchan chan<- Client, server *game.Server) {
+func handleConnection(c net.Conn, msgchan chan <- string, addchan chan <- Client, rmchan chan <- Client, server *game.Server) {
 	bufc := bufio.NewReader(c)
 	defer c.Close()
 
@@ -122,7 +149,7 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- Client, 
 	}()
 	io.WriteString(c, fmt.Sprintf("Welcome, %s!\n\n\r", client.nickname))
 
-	location, locationLoaded:= server.GetRoom( client.player.Position );
+	location, locationLoaded := server.GetRoom(client.player.Position);
 
 	if locationLoaded {
 		io.WriteString(c, fmt.Sprintf("You are at: \033[1;33;40m%s\033[m\n\n\r", location.Name))
@@ -131,25 +158,25 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- Client, 
 	msgchan <- fmt.Sprintf("New user %s has joined the chat room.\n\r", client.nickname)
 
 	// I/O
-	go client.ReadLinesInto(msgchan)
+	go client.ReadLinesInto(msgchan, server)
 	client.WriteLinesFrom(client.ch)
 }
 
 func handleMessages(msgchan <-chan string, addchan <-chan Client, rmchan <-chan Client) {
-	clients := make(map[net.Conn]chan<- string)
+	clients := make(map[net.Conn]chan <- string)
 
 	for {
 		select {
 		case msg := <-msgchan:
 			log.Printf("New message: %s", msg)
 			for _, ch := range clients {
-				go func(mch chan<- string) { mch <- "\033[1;33;40m" + msg + "\033[m" }(ch)
+				go func(mch chan <- string) { mch <- "\033[1;33;40m" + msg + "\033[m\n\r\n\r" }(ch)
 			}
 		case client := <-addchan:
-			log.Printf("New client: %v\n", client.conn)
+			log.Printf("New client: %v\n\r\n\r", client.conn)
 			clients[client.conn] = client.ch
 		case client := <-rmchan:
-			log.Printf("Client disconnects: %v\n", client.conn)
+			log.Printf("Client disconnects: %v\n\r\n\r", client.conn)
 			delete(clients, client.conn)
 		}
 	}
