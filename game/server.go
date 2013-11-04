@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"path/filepath"
 	"os"
+	"io"
+	"fmt"
 	"io/ioutil"
 	"log"
 )
@@ -123,4 +125,9 @@ func (s *Server) SavePlayer(player Player) (bool) {
 		log.Println(err)
 	}
 	return false
+}
+
+func (s *Server) OnExit(client Client) {
+	s.SavePlayer(client.Player)
+	io.WriteString(client.Conn, fmt.Sprintf("Good bye %s", client.Player.Nickname))
 }

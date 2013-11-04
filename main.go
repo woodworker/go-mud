@@ -85,12 +85,7 @@ func handleConnection(c net.Conn, msgchan chan <- string, addchan chan <- game.C
 		return
 	}
 
-	client := game.Client{
-		Conn:     c,
-		Nickname: player.Nickname,
-		Player:   player,
-		Ch:       make(chan string),
-	}
+	client := game.NewClient(c, player)
 
 	if strings.TrimSpace(client.Nickname) == "" {
 		log.Println("invalid username")

@@ -17,6 +17,15 @@ type Client struct {
 	Ch       	 chan string
 }
 
+func NewClient(c net.Conn, player Player) Client {
+	return Client{
+		Conn:     c,
+		Nickname: player.Nickname,
+		Player:   player,
+		Ch:       make(chan string),
+	}
+}
+
 
 func (c Client) ReadLinesInto(ch chan <- string, server *Server) {
 	bufc := bufio.NewReader(c.Conn)
@@ -75,6 +84,9 @@ func (c Client) ReadLinesInto(ch chan <- string, server *Server) {
 			}
 		case "say":
 			ch <- fmt.Sprintf("%s: %s", c.Player.Gamename, commandText)
+		case "exit":
+			server.OnExit(c)
+			c.Conn.Close()
 		}
 	}
 }
