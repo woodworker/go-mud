@@ -116,8 +116,11 @@ func (s *Server) SavePlayer(player Player) (bool) {
 	if err == nil {
 		playerFileName := s.getPlayerFileName(player.Nickname)
 		if ioerror := ioutil.WriteFile(playerFileName, data, 0666); ioerror != nil {
+			log.Println(ioerror)
 			return true
 		}
+	} else {
+		log.Println(err)
 	}
 	return false
 }

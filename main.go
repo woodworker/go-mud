@@ -11,13 +11,6 @@ import (
 	"github.com/woodworker/go-mud/game"
 )
 
-type Client struct {
-	conn     	 net.Conn
-	nickname	 string
-	player		 game.Player
-	ch       	 chan string
-}
-
 func main() {
 	workingdir, _ := os.Getwd()
 
@@ -34,8 +27,8 @@ func main() {
 	}
 
 	msgchan := make(chan string)
-	addchan := make(chan Client)
-	rmchan := make(chan Client)
+	addchan := make(chan game.Client)
+	rmchan := make(chan game.Client)
 
 	go handleMessages(msgchan, addchan, rmchan)
 
@@ -50,77 +43,6 @@ func main() {
 	}
 }
 
-func (c Client) ReadLinesInto(ch chan <- string, server *game.Server) {
-	bufc := bufio.NewReader(c.conn)
-	for {
-		line, err := bufc.ReadString('\n')
-		if err != nil {
-			break
-		}
-
-		userLine := strings.TrimSpace(line)
-
-		if(userLine==""){
-			continue
-		}
-
-		//io.WriteString(c.conn, fmt.Sprintf("You wrote: %s\n\r", userLine))
-		lineParts := strings.SplitN(userLine, " ", 2)
-
-		var command, commandText string
-		if(len(lineParts)>0){
-			command = lineParts[0]
-		}
-		if(len(lineParts)>1){
-			commandText = lineParts[1]
-		}
-
-		log.Printf("Command: %s  -  %s", command, commandText)
-
-		switch command {
-		case "look": fallthrough
-		case "watch":
-			place, ok := server.GetRoom(c.player.Position)
-			if ok {
-				io.WriteString(c.conn, fmt.Sprintf("You are at \033[1;30;41m%s\033[0m\n\r", place.Name))
-				for _,oneDirection := range place.Directions {
-					place, ok := server.GetRoom(oneDirection.Station)
-					if ok && ((oneDirection.Hidden == "" && commandText == "") || strings.ToLower(oneDirection.Direction) == strings.ToLower(commandText)) {
-						io.WriteString(c.conn, fmt.Sprintf("When you look %s you see %s\n\r", oneDirection.Direction, place.Name))
-					}
-				}
-			}
-		case "go":
-			place, ok := server.GetRoom(c.player.Position)
-			if ok {
-				for _,oneDirection := range place.Directions {
-					if(strings.ToLower(oneDirection.Direction) == strings.ToLower(commandText)){
-						place, ok := server.GetRoom(oneDirection.Station)
-						if ok {
-							io.WriteString(c.conn, fmt.Sprintf("You are now at \033[1;30;41m%s\033[0m\n\r", place.Name))
-							if place.Intro !="" {
-								io.WriteString(c.conn, fmt.Sprintf(" > %s\n\r", place.Intro))
-							}
-							c.player.Position = place.Key
-							server.SavePlayer(c.player)
-						}
-					}
-				}
-			}
-		case "say":
-			ch <- fmt.Sprintf("%s: %s", c.player.Gamename, commandText)
-		}
-	}
-}
-
-func (c Client) WriteLinesFrom(ch <-chan string) {
-	for msg := range ch {
-		_, err := io.WriteString(c.conn, msg)
-		if err != nil {
-			return
-		}
-	}
-}
 
 func promptNick(c net.Conn, bufc *bufio.Reader) string {
 	io.WriteString(c, "What is your nick? ")
@@ -128,7 +50,13 @@ func promptNick(c net.Conn, bufc *bufio.Reader) string {
 	return string(nick)
 }
 
-func handleConnection(c net.Conn, msgchan chan <- string, addchan chan <- Client, rmchan chan <- Client, server *game.Server) {
+func promptMessage(c net.Conn, bufc *bufio.Reader, message string) string {
+	io.WriteString(c, message)
+	nick, _, _ := bufc.ReadLine()
+	return string(nick)
+}
+
+func handleConnection(c net.Conn, msgchan chan <- string, addchan chan <- game.Client, rmchan chan <- game.Client, server *game.Server) {
 	bufc := bufio.NewReader(c)
 	defer c.Close()
 
@@ -138,6 +66,12 @@ func handleConnection(c net.Conn, msgchan chan <- string, addchan chan <- Client
 	for {
 		nickname = promptNick(c, bufc)
 		ok := server.LoadPlayer(nickname)
+
+		if ok == false {
+			io.WriteString(c, fmt.Sprintf("Username %s does not exists. Should i create it?", nickname))
+
+		}
+
 		if ok == true {
 			break
 		}
@@ -151,14 +85,14 @@ func handleConnection(c net.Conn, msgchan chan <- string, addchan chan <- Client
 		return
 	}
 
-	client := Client{
-		conn:     c,
-		nickname: player.Nickname,
-		player:   player,
-		ch:       make(chan string),
+	client := game.Client{
+		Conn:     c,
+		Nickname: player.Nickname,
+		Player:   player,
+		Ch:       make(chan string),
 	}
 
-	if strings.TrimSpace(client.nickname) == "" {
+	if strings.TrimSpace(client.Nickname) == "" {
 		log.Println("invalid username")
 		io.WriteString(c, "Invalid Username\n")
 		return
@@ -167,26 +101,26 @@ func handleConnection(c net.Conn, msgchan chan <- string, addchan chan <- Client
 	// Register user
 	addchan <- client
 	defer func() {
-		msgchan <- fmt.Sprintf("User %s left the chat room.\n\r", client.nickname)
+		msgchan <- fmt.Sprintf("User %s left the chat room.\n\r", client.Nickname)
 		log.Printf("Connection from %v closed.\n", c.RemoteAddr())
 		rmchan <- client
 	}()
-	io.WriteString(c, fmt.Sprintf("Welcome, %s!\n\n\r", client.nickname))
+	io.WriteString(c, fmt.Sprintf("Welcome, %s!\n\n\r", client.Nickname))
 
-	location, locationLoaded := server.GetRoom(client.player.Position);
+	location, locationLoaded := server.GetRoom(client.Player.Position);
 
 	if locationLoaded {
-		io.WriteString(c, fmt.Sprintf("You are at: \033[1;33;40m%s\033[m\n\n\r", location.Name))
+		location.OnEnterRoom(server, client)
 	}
 
-	msgchan <- fmt.Sprintf("New user %s has joined the chat room.\n\r", client.nickname)
+	//msgchan <- fmt.Sprintf("New user %s has joined the chat room.\n\r", client.Nickname)
 
 	// I/O
 	go client.ReadLinesInto(msgchan, server)
-	client.WriteLinesFrom(client.ch)
+	client.WriteLinesFrom(client.Ch)
 }
 
-func handleMessages(msgchan <-chan string, addchan <-chan Client, rmchan <-chan Client) {
+func handleMessages(msgchan <-chan string, addchan <-chan game.Client, rmchan <-chan game.Client) {
 	clients := make(map[net.Conn]chan <- string)
 
 	for {
@@ -197,11 +131,11 @@ func handleMessages(msgchan <-chan string, addchan <-chan Client, rmchan <-chan 
 				go func(mch chan <- string) { mch <- "\033[1;33;40m" + msg + "\033[m\n\r\n\r" }(ch)
 			}
 		case client := <-addchan:
-			log.Printf("New client: %v\n\r\n\r", client.conn)
-			clients[client.conn] = client.ch
+			log.Printf("New client: %v\n\r\n\r", client.Conn)
+			clients[client.Conn] = client.Ch
 		case client := <-rmchan:
-			log.Printf("Client disconnects: %v\n\r\n\r", client.conn)
-			delete(clients, client.conn)
+			log.Printf("Client disconnects: %v\n\r\n\r", client.Conn)
+			delete(clients, client.Conn)
 		}
 	}
 }

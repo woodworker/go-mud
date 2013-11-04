@@ -8,5 +8,5 @@ type Player struct {
 	Gamename	string      `xml:"name"`
 	Position	string		`xml:"position,attr"`
 	PlayerType	string		`xml:"type"`
-	Ch       	chan string
+	Ch 			chan string `xml:"-"`
 }
