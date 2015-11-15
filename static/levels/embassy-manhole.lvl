@@ -1,0 +1,7 @@
+<station key="embassy-manhole">
+    <name>Manhole</name>
+    <directions>
+        <direction station="cbase-tunnel">East</direction>
+        <direction station="china-embassy" hidden="1">Up</direction>
+    </directions>
+</station>

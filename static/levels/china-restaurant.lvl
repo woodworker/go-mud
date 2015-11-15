@@ -2,6 +2,6 @@
     <name>Restaurant Ming Dynastie</name>
     <directions>
         <direction station="cbase-trees">East</direction>
-        <direction station="jannowitzbruecke-brdige">West</direction>
+        <direction station="jannowitzbruecke-bridge">West</direction>
     </directions>
 </station>

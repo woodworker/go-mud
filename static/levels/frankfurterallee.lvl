@@ -1,5 +1,5 @@
 <station key="frankfurterallee">
-    <name>Fankfurter Allee</name>
+    <name>Frankfurter Allee</name>
     <directions>
         <direction station="ostkreuz">South</direction>
     </directions>

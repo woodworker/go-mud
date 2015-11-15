@@ -1,4 +1,4 @@
-<station key="jannowitzbruecke-brdige">
+<station key="jannowitzbruecke-bridge">
     <name>Jannowitz Bridge</name>
     <directions>
         <direction station="china-restaurant">East</direction>

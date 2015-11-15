@@ -3,9 +3,10 @@
     <intro>It looks like a movie set, but you are really at c-base the spacestation below berlin.</intro>
     <directions>
         <direction station="cbase-door">South</direction>
+        <direction station="cbase-weltenbaulabor">Down</direction>
     </directions>
     <actions>
-        <action name="nerding">WOW, nerding arround in c-base, you are now part of the worldwide hackerspace community.
+        <action name="nerding" dependency="jannowitzbruecke:nerding">WOW, nerding arround in c-base, you are now part of the worldwide hackerspace community.
 Congratulations
 </action>
     </actions>

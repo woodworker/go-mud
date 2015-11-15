@@ -1,0 +1,10 @@
+<station key="cbase-clab">
+    <name>c-lab</name>
+    <intro>This looks like a nice little electronics lab, maybe solder something.</intro>
+    <directions>
+        <direction station="cbase-weltenbaulabor">South</direction>
+    </directions>
+    <actions>
+        <action name="solder" dependency="cbase-mainhall:nerding">You build a nice little blinky thingy</action>
+    </actions>
+</station>

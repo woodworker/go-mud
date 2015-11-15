@@ -4,7 +4,7 @@
     <directions>
         <direction station="alex">West</direction>
         <direction station="ostbahnhof">East</direction>
-        <direction station="jannowitzbruecke-brdige">South</direction>
+        <direction station="jannowitzbruecke-bridge">South</direction>
     </directions>
     <actions>
         <action name="nerding">Maybe you want to visit c-base</action>

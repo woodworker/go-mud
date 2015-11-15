@@ -2,6 +2,7 @@
     <name>Chinese embassy</name>
     <intro>There is a police officer, so dont look suspicious.</intro>
     <directions>
-        <direction station="jannowitzbruecke-brdige">East</direction>
+        <direction station="jannowitzbruecke-bridge">East</direction>
+        <direction station="embassy-manhole" hidden="1" dependency="cbase-clab:solder" failMsg="It's pretty dark down there">Down</direction>
     </directions>
 </station>
