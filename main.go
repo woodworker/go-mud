@@ -26,8 +26,8 @@ func main() {
 	log.Printf("%v", server)
 
 	if !server.HasDefaultLevel() {
-		log.Println("no default level set");
-		log.Println("please tag one of the levels as default");
+		log.Println("no default level set")
+		log.Println("please tag one of the levels as default")
 		os.Exit(1)
 	}
 
@@ -54,18 +54,12 @@ func main() {
 	}
 }
 
-func promptNick(c net.Conn, bufc *bufio.Reader) string {
-	io.WriteString(c, "What's your nick? ")
-	nick, _, _ := bufc.ReadLine()
-	return string(nick)
-}
-
 func promptMessage(c net.Conn, bufc *bufio.Reader, message string) string {
-	io.WriteString(c, message)
 	for {
+		io.WriteString(c, message)
 		answer, _, _ := bufc.ReadLine()
-		if (string(answer) != "") {
-			return string(answer);
+		if string(answer) != "" {
+			return string(answer)
 		}
 	}
 }
@@ -78,7 +72,7 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 
 	var nickname string
 	for {
-		nickname = promptNick(c, bufc)
+		nickname = promptMessage(c, bufc, "Whats your Nick?\n\r  ")
 		ok := server.LoadPlayer(nickname)
 
 		if ok == false {
@@ -86,10 +80,10 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 			answer := promptMessage(c, bufc, "Do you want to create that user? [y|n] ")
 
 			if answer == "y" {
-				gameName := promptMessage(c, bufc, "Please enter your ingame Name: ");
-				playerType := promptMessage(c, bufc, "Please enter your character type: ");
+				gameName := promptMessage(c, bufc, "Please enter your ingame Name: ")
+				playerType := promptMessage(c, bufc, "Please enter your character type: ")
 
-				server.CreatePlayer(nickname, gameName, playerType);
+				server.CreatePlayer(nickname, gameName, playerType)
 				break
 			}
 		}
@@ -145,7 +139,7 @@ func handleMessages(msgchan <-chan string, addchan <-chan game.Client, rmchan <-
 		case msg := <-msgchan:
 			log.Printf("New message: %s", msg)
 			for _, ch := range clients {
-				go func(mch chan<- string) { mch <- "\033[1;33;40m" + msg + "\033[m\n\r\n\r" }(ch)
+				go func(mch chan<- string) { mch <- "\033[1;33;40m" + msg + "\033[m\n\r" }(ch)
 			}
 		case client := <-addchan:
 			log.Printf("New client: %v\n\r\n\r", client.Conn)
