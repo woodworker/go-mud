@@ -1,4 +1,4 @@
-<station key="alex">
+<station key="alex" tag="default">
     <name>Alexanderplatz</name>
     <directions>
         <direction station="jannowitzbruecke">East</direction>

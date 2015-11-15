@@ -11,10 +11,15 @@ import (
 )
 
 type Server struct {
-	name		string
-	players		map[string]Player
-	levels		map[string]Level
-	workingdir	string
+	name         string
+	players      map[string]Player
+	levels       map[string]Level
+	workingdir   string
+	defaultLevel Level
+}
+
+func (s *Server) HasDefaultLevel() bool {
+	return s.defaultLevel.Key != ""
 }
 
 func NewServer(servername string, serverdir string) *Server {
@@ -36,29 +41,26 @@ func (s *Server) LoadLevels() error {
 		if fileIoErr != nil {
 			log.Printf("\n")
 			log.Printf("File %s could not be loaded\n", path)
-			log.Printf("%v",fileIoErr)
-			//return fileIoErr
-			return nil
+			log.Printf("%v", fileIoErr)
+			return fileIoErr
 		}
 		level := Level{}
 		if xmlerr := xml.Unmarshal(fileContent, &level); xmlerr != nil {
 			log.Printf("\n")
 			log.Printf("File %s could not be Unmarshaled\n", path, xmlerr)
-			log.Printf("%v",xmlerr)
-			//return xmlerr
-			return nil
+			log.Printf("%v", xmlerr)
+			return xmlerr
 		}
-		log.Printf(" loaded: %s", info.Name())
+		log.Printf(" loaded: %s\n", info.Name())
 		s.addLevel(level)
 		return nil
 	}
 
-	filepath.Walk(s.workingdir+"/static/levels/", levelWalker)
-	return nil
+	return filepath.Walk(s.workingdir + "/static/levels/", levelWalker)
 }
 
 func (s *Server) getPlayerFileName(playerName string) string {
-	return s.workingdir+"/static/player/"+playerName+".player"
+	return s.workingdir + "/static/player/" + playerName + ".player"
 }
 
 func (s *Server) LoadPlayer(playerName string) bool {
@@ -70,7 +72,7 @@ func (s *Server) LoadPlayer(playerName string) bool {
 	if fileIoErr != nil {
 		log.Printf("\n")
 		log.Printf("File %s could not be loaded\n", playerFileName)
-		log.Printf("%v",fileIoErr)
+		log.Printf("%v", fileIoErr)
 		//return fileIoErr
 		return false
 	}
@@ -79,7 +81,7 @@ func (s *Server) LoadPlayer(playerName string) bool {
 	if xmlerr := xml.Unmarshal(fileContent, &player); xmlerr != nil {
 		log.Printf("\n")
 		log.Printf("File %s could not be Unmarshaled\n", playerFileName, xmlerr)
-		log.Printf("%v",xmlerr)
+		log.Printf("%v", xmlerr)
 		//return xmlerr
 		return false
 	}
@@ -90,6 +92,10 @@ func (s *Server) LoadPlayer(playerName string) bool {
 }
 
 func (s *Server) addLevel(level Level) error {
+	if (level.Tag == "default") {
+		log.Printf("default level loaded: %s\n", level.Key)
+		s.defaultLevel = level
+	}
 	s.levels[level.Key] = level
 	return nil
 }
@@ -100,12 +106,12 @@ func (s *Server) addPlayer(player Player) error {
 }
 
 func (s *Server) GetPlayerByNick(nickname string) (Player, bool) {
-	player,ok := s.players[nickname]
+	player, ok := s.players[nickname]
 	return player, ok
 }
 
 func (s *Server) GetRoom(key string) (Level, bool) {
-	level,ok := s.levels[key]
+	level, ok := s.levels[key]
 	return level, ok
 }
 
@@ -113,8 +119,24 @@ func (s *Server) GetName() string {
 	return s.name
 }
 
+func (s *Server) CreatePlayer(nick string, name string, playerType string) {
+	playerFileName := s.getPlayerFileName(nick)
+	if _, err := os.Stat(playerFileName); err == nil {
+		s.LoadPlayer(nick);
+		fmt.Printf("Player %s does already exists", nick)
+		return
+	}
+	player := Player{
+		Gamename:name,
+		Nickname:nick,
+		PlayerType:playerType,
+		Position:s.defaultLevel.Key,
+	}
+	s.addPlayer(player)
+}
+
 func (s *Server) SavePlayer(player Player) (bool) {
-	data, err := xml.Marshal(player)
+	data, err := xml.MarshalIndent(player, "", "    ")
 	if err == nil {
 		playerFileName := s.getPlayerFileName(player.Nickname)
 		if ioerror := ioutil.WriteFile(playerFileName, data, 0666); ioerror != nil {
@@ -129,5 +151,5 @@ func (s *Server) SavePlayer(player Player) (bool) {
 
 func (s *Server) OnExit(client Client) {
 	s.SavePlayer(client.Player)
-	io.WriteString(client.Conn, fmt.Sprintf("Good bye %s", client.Player.Nickname))
+	io.WriteString(client.Conn, fmt.Sprintf("Good bye %s", client.Player.Gamename))
 }

@@ -7,6 +7,7 @@ import (
 
 type Level struct {
 	Key			string		`xml:"key,attr"`
+	Tag			string		`xml:"tag,attr"`
 	Name		string		`xml:"name"`
 	Directions	[]Direction	`xml:"directions>direction"`
 	Intro		string		`xml:"intro"`
