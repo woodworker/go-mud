@@ -17,13 +17,12 @@ func main() {
 
 	log.Printf("Leveldir %s", workingdir+"/static/levels/")
 
-	server := game.NewServer("berlin-mud", workingdir)
+	server := game.NewServer(workingdir)
 	err := server.LoadLevels()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	log.Printf("%v", server)
 
 	if !server.HasDefaultLevel() {
 		log.Println("no default level set")
@@ -31,11 +30,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	ln, err := net.Listen("tcp", ":1337")
+	ln, err := net.Listen("tcp", server.Config.Interface)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+
+	log.Printf("Listen on: %s", ln.Addr())
 
 	msgchan := make(chan string)
 	addchan := make(chan game.Client)
@@ -68,7 +69,10 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 	bufc := bufio.NewReader(c)
 	defer c.Close()
 
-	io.WriteString(c, fmt.Sprintf("\033[1;30;41mWelcome to the Go-Mud Server %s!\033[0m\n\r", server.GetName()))
+	log.Println("New connection open:", c.RemoteAddr())
+
+	io.WriteString(c, fmt.Sprintf("\033[1;30;41mWelcome to \"%s\" Go-MUD Server!\033[0m\n\r", server.GetName()))
+	io.WriteString(c, server.Config.Motd)
 
 	var nickname string
 	for {
@@ -123,8 +127,6 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 	if locationLoaded {
 		location.OnEnterRoom(server, client)
 	}
-
-	//msgchan <- fmt.Sprintf("New user %s has joined the chat room.\n\r", client.Nickname)
 
 	// I/O
 	go client.ReadLinesInto(msgchan, server)

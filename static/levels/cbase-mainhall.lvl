@@ -9,4 +9,62 @@
 Congratulations
 </action>
     </actions>
+    <asciimation>
+        <frame id="1" duration="300">
+            <line>         (__)</line>
+            <line>         (oo)</line>
+            <line>  /-------\/</line>
+            <line> / |     ||</line>
+            <line>*  ||----||</line>
+            <line>   ~~    ~~ </line>
+        </frame>
+        <frame id="2" duration="300">
+            <line>           (__)</line>
+            <line>           (oo)</line>
+            <line>    /-------\/</line>
+            <line>   / |     ||</line>
+            <line>  *  ||----||</line>
+            <line>     ~~    ~~ </line>
+        </frame>
+        <frame id="3" duration="300">
+            <line>             (__)</line>
+            <line>             (oo)</line>
+            <line>      /-------\/</line>
+            <line>     / |     ||</line>
+            <line>    *  ||----||</line>
+            <line>       ~~    ~~ </line>
+        </frame>
+        <frame id="4" duration="300">
+            <line>               (__)</line>
+            <line>               (oo)</line>
+            <line>        /-------\/</line>
+            <line>       / |     ||</line>
+            <line>      *  ||----||</line>
+            <line>         ~~    ~~ </line>
+        </frame>
+        <frame id="5" duration="300">
+            <line>                 (__)</line>
+            <line>                 (oo)</line>
+            <line>          /-------\/</line>
+            <line>         / |     ||</line>
+            <line>        *  ||----||</line>
+            <line>           ~~    ~~ </line>
+        </frame>
+        <frame id="6" duration="600">
+            <line>                   (__)   _______</line>
+            <line>                   (oo)  /       \</line>
+            <line>            /-------\/ --| Moooo |</line>
+            <line>           / |     ||    \_______/</line>
+            <line>          *  ||----||</line>
+            <line>             ~~    ~~ </line>
+        </frame>
+        <frame id="7" duration="300">
+            <line>                   (__)</line>
+            <line>                   (oo)</line>
+            <line>            /-------\/</line>
+            <line>           / |     ||</line>
+            <line>          *  ||----||</line>
+            <line>             ~~    ~~ </line>
+        </frame>
+    </asciimation>
 </station>

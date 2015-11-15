@@ -2,12 +2,12 @@ package game
 
 import (
 	"encoding/xml"
-	"path/filepath"
-	"os"
-	"io"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
 )
 
 type Server struct {
@@ -16,19 +16,51 @@ type Server struct {
 	levels       map[string]Level
 	workingdir   string
 	defaultLevel Level
+	Config       ServerConfig
+}
+
+type ServerConfig struct {
+	Name      string `xml:"name"`
+	Interface string `xml:"interface"`
+	Motd      string `xml:"motd"`
 }
 
 func (s *Server) HasDefaultLevel() bool {
 	return s.defaultLevel.Key != ""
 }
 
-func NewServer(servername string, serverdir string) *Server {
-	return &Server{
-		name: servername,
-		players: make(map[string]Player),
-		levels: make(map[string]Level),
+func NewServer(serverdir string) *Server {
+	server := &Server{
+		players:    make(map[string]Player),
+		levels:     make(map[string]Level),
 		workingdir: serverdir,
 	}
+
+	server.LoadConfig()
+
+	return server
+}
+
+func (s *Server) LoadConfig() error {
+	log.Println("Loading config ...")
+	configFileName := s.workingdir + "/static/server.xml"
+	fileContent, fileIoErr := ioutil.ReadFile(configFileName)
+	if fileIoErr != nil {
+		log.Printf("\n")
+		log.Printf("File %s could not be loaded\n", configFileName)
+		log.Printf("%v", fileIoErr)
+		return fileIoErr
+	}
+	config := ServerConfig{}
+	if xmlerr := xml.Unmarshal(fileContent, &config); xmlerr != nil {
+		log.Printf("\n")
+		log.Printf("File %s could not be Unmarshaled\n", configFileName, xmlerr)
+		log.Printf("%v", xmlerr)
+		return xmlerr
+	}
+	s.Config = config
+	log.Println(" config loaded")
+	return nil
 }
 
 func (s *Server) LoadLevels() error {
@@ -56,7 +88,7 @@ func (s *Server) LoadLevels() error {
 		return nil
 	}
 
-	return filepath.Walk(s.workingdir + "/static/levels/", levelWalker)
+	return filepath.Walk(s.workingdir+"/static/levels/", levelWalker)
 }
 
 func (s *Server) getPlayerFileName(playerName string) string {
@@ -92,7 +124,7 @@ func (s *Server) LoadPlayer(playerName string) bool {
 }
 
 func (s *Server) addLevel(level Level) error {
-	if (level.Tag == "default") {
+	if level.Tag == "default" {
 		log.Printf("default level loaded: %s\n", level.Key)
 		s.defaultLevel = level
 	}
@@ -116,26 +148,26 @@ func (s *Server) GetRoom(key string) (Level, bool) {
 }
 
 func (s *Server) GetName() string {
-	return s.name
+	return s.Config.Name
 }
 
 func (s *Server) CreatePlayer(nick string, name string, playerType string) {
 	playerFileName := s.getPlayerFileName(nick)
 	if _, err := os.Stat(playerFileName); err == nil {
-		s.LoadPlayer(nick);
+		s.LoadPlayer(nick)
 		fmt.Printf("Player %s does already exists", nick)
 		return
 	}
 	player := Player{
-		Gamename:name,
-		Nickname:nick,
-		PlayerType:playerType,
-		Position:s.defaultLevel.Key,
+		Gamename:   name,
+		Nickname:   nick,
+		PlayerType: playerType,
+		Position:   s.defaultLevel.Key,
 	}
 	s.addPlayer(player)
 }
 
-func (s *Server) SavePlayer(player Player) (bool) {
+func (s *Server) SavePlayer(player Player) bool {
 	data, err := xml.MarshalIndent(player, "", "    ")
 	if err == nil {
 		playerFileName := s.getPlayerFileName(player.Nickname)
