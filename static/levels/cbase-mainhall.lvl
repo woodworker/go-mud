@@ -1,6 +1,6 @@
 <station key="cbase-mainhall">
-    <name>Großer Raum</name>
-    <intro>Du glaubst du bist in einem Filmset gelandet, aber es ist die c-base, die Raumstation unter Berlin.</intro>
+    <name>Main hall</name>
+    <intro>It looks like a movie set, but you are really at c-base the spacestation below berlin.</intro>
     <directions>
         <direction station="cbase-door">South</direction>
     </directions>

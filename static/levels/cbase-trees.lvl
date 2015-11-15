@@ -1,5 +1,5 @@
 <station key="cbase-trees">
-    <name>Eine Baumgruppe</name>
+    <name>Trees</name>
     <directions>
         <direction station="cbase-rs20">East</direction>
         <direction station="china-restaurant">West</direction>

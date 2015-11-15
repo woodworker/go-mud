@@ -1,11 +1,11 @@
 <station key="ostbahnhof">
     <name>Ostbahnhof</name>
-    <intro>Du erahnst einen Hackathon in der ferne.</intro>
+    <intro>It seems that there is a Hackathon near by.</intro>
     <directions>
         <direction station="jannowitzbruecke">West</direction>
         <direction station="warschauerstr">East</direction>
     </directions>
     <actions>
-        <action name="think">It seems that you like to think, why not go to a hackathon?</action>
+        <action name="hack">Hi Berlin DevFest 2015!!!</action>
     </actions>
 </station>

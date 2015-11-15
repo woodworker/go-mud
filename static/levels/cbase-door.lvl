@@ -1,6 +1,6 @@
 <station key="cbase-door">
-    <name>Eine Tür</name>
-    <intro>Auf den ersten Blick sieht es aus wie eine Tür, aber als du näher kommst sieht es eher nach einer Lüftschleuse aus.</intro>
+    <name>A Dor</name>
+    <intro>At first it's just a simple door but when you come closer it looks more like a airlock</intro>
     <directions>
         <direction station="cbase-mainhall">North</direction>
         <direction station="cbase-rs20">South</direction>
