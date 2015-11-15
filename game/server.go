@@ -3,7 +3,6 @@ package game
 import (
 	"encoding/xml"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -183,5 +182,5 @@ func (s *Server) SavePlayer(player Player) bool {
 
 func (s *Server) OnExit(client Client) {
 	s.SavePlayer(client.Player)
-	io.WriteString(client.Conn, fmt.Sprintf("Good bye %s", client.Player.Gamename))
+	client.WriteLineToUser(fmt.Sprintf("Good bye %s", client.Player.Gamename))
 }

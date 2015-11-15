@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"strings"
 )
 
 type Level struct {
@@ -57,15 +58,18 @@ type Frame struct {
 }
 
 type Action struct {
-	Name   string `xml:"name,attr"`
-	Hidden string `xml:"hidden,attr"`
-	Answer string `xml:",chardata"`
+	Name        string `xml:"name,attr"`
+	Hidden 	    string `xml:"hidden,attr"`
+	Dependency  string `xml:"dependency,attr"`
+	Answer      string `xml:",chardata"`
 }
 
 type Direction struct {
-	Station   string `xml:"station,attr"`
-	Hidden    string `xml:"hidden,attr"`
-	Direction string `xml:",chardata"`
+	Station     string `xml:"station,attr"`
+	Hidden      string `xml:"hidden,attr"`
+	Dependency  string `xml:"dependency,attr"`
+	FailMessage string `xml:"failMsg,attr"`
+	Direction   string `xml:",chardata"`
 }
 
 func (l *Level) OnEnterRoom(s *Server, c Client) {
@@ -93,3 +97,33 @@ func (l *Level) GetRoomAction(command string) (Action, bool) {
 
 	return Action{}, false
 }
+
+
+func (l *Level) GetRoomActionName(action Action) string {
+	return fmt.Sprintf("%s:%s", l.Key, action.Name)
+}
+
+func (l *Level) CanSeeDirection(direction Direction, player Player, viewDirection string) bool {
+	if viewDirection != "" {
+		return strings.ToLower(direction.Direction) == strings.ToLower(viewDirection)
+	}
+
+	if direction.Hidden == "" {
+		return true
+	}
+	if player.HasAction(direction.Station) {
+		return true
+	}
+	return false
+}
+
+func (l *Level) CanGoDirection(direction Direction, player Player) (bool, string) {
+	if direction.Dependency == "" {
+		return true, ""
+	}
+	if player.HasAction(direction.Dependency) {
+		return true, ""
+	}
+	return false, direction.FailMessage
+}
+

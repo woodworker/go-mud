@@ -29,6 +29,10 @@ func (c Client) WriteToUser(msg string) {
 	io.WriteString(c.Conn, msg)
 }
 
+func (c Client) WriteLineToUser(msg string) {
+	io.WriteString(c.Conn, msg + "\n\r")
+}
+
 func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 	bufc := bufio.NewReader(c.Conn)
 
@@ -57,26 +61,17 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 
 		log.Printf("Command by %s: %s  -  %s", c.Player.Nickname, command, commandText)
 
-		place, ok := server.GetRoom(c.Player.Position)
-		if ok {
-			command, ok := place.GetRoomAction(command)
-			if ok {
-				c.WriteToUser(fmt.Sprintf(" > %s", command.Answer))
-				continue
-			}
-		}
-
 		switch command {
 		case "look":
 			fallthrough
 		case "watch":
 			place, ok := server.GetRoom(c.Player.Position)
 			if ok {
-				c.WriteToUser(fmt.Sprintf("You are at \033[1;30;41m%s\033[0m\n\r", place.Name))
-				for _, oneDirection := range place.Directions {
-					place, ok := server.GetRoom(oneDirection.Station)
-					if ok && ((oneDirection.Hidden == "" && commandText == "") || strings.ToLower(oneDirection.Direction) == strings.ToLower(commandText)) {
-						c.WriteToUser(fmt.Sprintf(" When you look %s you see %s\n\r", oneDirection.Direction, place.Name))
+				c.WriteLineToUser(fmt.Sprintf("You are at \033[1;30;41m%s\033[0m", place.Name))
+				for _, direction := range place.Directions {
+					place, ok := server.GetRoom(direction.Station)
+					if (ok && place.CanSeeDirection(direction, c.Player, commandText)) {
+						c.WriteLineToUser(fmt.Sprintf(" When you look %s you see %s", direction.Direction, place.Name))
 					}
 				}
 			}
@@ -87,10 +82,18 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 					if strings.ToLower(oneDirection.Direction) == strings.ToLower(commandText) {
 						place, ok := server.GetRoom(oneDirection.Station)
 						if ok {
-							place.OnEnterRoom(server, c)
-							c.Player.Position = string(place.Key)
-							log.Println(c.Player)
-							server.SavePlayer(c.Player)
+							canEnter, message := place.CanGoDirection(oneDirection, c.Player)
+							if !canEnter {
+								c.WriteLineToUser(" >" + message)
+							} else {
+								place.OnEnterRoom(server, c)
+								c.Player.Position = string(place.Key)
+								log.Println(c.Player)
+								c.Player.LogAction(place.Key)
+								server.SavePlayer(c.Player)
+							}
+						} else {
+							c.WriteToUser("\n")
 						}
 					}
 				}
@@ -106,6 +109,20 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 		case "exit":
 			server.OnExit(c)
 			c.Conn.Close()
+		default:
+			place, ok := server.GetRoom(c.Player.Position)
+			if ok {
+				action, ok := place.GetRoomAction(command)
+				if ok {
+					actionName := place.GetRoomActionName(action)
+					if action.Dependency == "" || c.Player.HasAction(action.Dependency) {
+						c.Player.LogAction(actionName)
+						server.SavePlayer(c.Player)
+						c.WriteLineToUser(fmt.Sprintf(" > %s", action.Answer))
+						continue
+					}
+				}
+			}
 		}
 	}
 }
