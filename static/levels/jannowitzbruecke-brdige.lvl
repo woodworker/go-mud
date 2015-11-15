@@ -2,6 +2,7 @@
     <name>Jannowitz Bridge</name>
     <directions>
         <direction station="china-restaurant">East</direction>
+        <direction station="jannowitzbruecke">North</direction>
         <direction station="china-embassy">West</direction>
     </directions>
 </station>
