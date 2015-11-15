@@ -1,0 +1,7 @@
+<station key="jannowitzbruecke-brdige">
+    <name>Die Jannowitz Brücke</name>
+    <directions>
+        <direction station="china-restaurant">East</direction>
+        <direction station="china-embassy">West</direction>
+    </directions>
+</station>

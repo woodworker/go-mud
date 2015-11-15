@@ -1,0 +1,7 @@
+<station key="china-embassy">
+    <name>Die Chinesische Botschaft</name>
+    <intro>Du siehst einen Polizisten evtl solltest du hier nicht zu lange rumstehen.</intro>
+    <directions>
+        <direction station="jannowitzbruecke-brdige">East</direction>
+    </directions>
+</station>

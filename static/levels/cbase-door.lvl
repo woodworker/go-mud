@@ -1,0 +1,8 @@
+<station key="cbase-door">
+    <name>Eine Tür</name>
+    <intro>Auf den ersten Blick sieht es aus wie eine Tür, aber als du näher kommst sieht es eher nach einer Lüftschleuse aus.</intro>
+    <directions>
+        <direction station="cbase-mainhall">North</direction>
+        <direction station="cbase-rs20">South</direction>
+    </directions>
+</station>

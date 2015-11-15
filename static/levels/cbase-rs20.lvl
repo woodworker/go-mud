@@ -1,0 +1,8 @@
+<station key="cbase-rs20">
+    <name>RS20</name>
+    <intro>Es sieht zwar wie ein ganz normales Haus aus aber du glaubst da ist mehr</intro>
+    <directions>
+        <direction station="cbase-door">North</direction>
+        <direction station="cbase-trees">West</direction>
+    </directions>
+</station>

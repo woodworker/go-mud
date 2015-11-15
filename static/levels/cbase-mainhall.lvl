@@ -1,0 +1,12 @@
+<station key="cbase-mainhall">
+    <name>Großer Raum</name>
+    <intro>Du glaubst du bist in einem Filmset gelandet, aber es ist die c-base, die Raumstation unter Berlin.</intro>
+    <directions>
+        <direction station="cbase-door">South</direction>
+    </directions>
+    <actions>
+        <action name="nerding">WOW, nerding arround in c-base, you are now part of the worldwide hackerspace community.
+Congratulations
+</action>
+    </actions>
+</station>

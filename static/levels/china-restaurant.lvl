@@ -1,0 +1,7 @@
+<station key="china-restaurant">
+    <name>Restaurant Ming Dynastie</name>
+    <directions>
+        <direction station="cbase-trees">East</direction>
+        <direction station="jannowitzbruecke-brdige">West</direction>
+    </directions>
+</station>
