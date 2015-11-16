@@ -23,4 +23,4 @@ _testmain.go
 
 .idea
 
-static/players/*
+static/player/*
