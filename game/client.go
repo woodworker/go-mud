@@ -99,7 +99,7 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 			}
 		case "say":
 			// TODO: implement channel wide communication
-			io.WriteString(c.Conn, "\033[F") // up one line so we overwrite the say command typed with the result
+			io.WriteString(c.Conn, "\033[1F\033[K") // up one line so we overwrite the say command typed with the result
 			ch <- fmt.Sprintf("%s: %s", c.Player.Gamename, commandText)
 		case "quit":
 			fallthrough
@@ -115,16 +115,20 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 				if gotRoomAction {
 					isAllowed, message := place.CanDoAction(action, c.Player)
 					if message != "" {
-						c.WriteLineToUser(fmt.Sprintf(" > %s", message))
+						lines := strings.Split(message,"\n")
+						for _, line := range lines {
+							c.WriteLineToUser(fmt.Sprintf(" > %s", line))
+						}
 					}
 					if isAllowed {
 						actionName := place.GetRoomActionName(action)
 						c.Player.LogAction(actionName)
 						server.SavePlayer(c.Player)
-						continue
 					}
+					continue
 				}
 			}
+			c.WriteToUser("\033[1F\033[K")
 		}
 	}
 }

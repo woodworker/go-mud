@@ -31,7 +31,7 @@ type Action struct {
 	Name         string       `xml:"name,attr"`
 	Hidden       string       `xml:"hidden,attr"`
 	Dependencies []Dependency `xml:"dependency"`
-	Answer       string       `xml:",chardata"`
+	Answer       string       `xml:"answer"`
 }
 
 type Direction struct {
@@ -50,13 +50,14 @@ type Dependency struct {
 func (l *Level) OnEnterRoom(s *Server, c Client) {
 
 	c.WriteToUser("┌────────────");
-	for i := 0; i < len(l.Name); i++ {
+	runeLen := len([]rune(l.Name))
+	for i := 0; i < runeLen; i++ {
 		c.WriteToUser("─");
 	}
 	c.WriteToUser("─┐\n\r");
 	c.WriteLineToUser(fmt.Sprintf("│ You are at \033[1;30;41m%s\033[0m │", l.Name))
 	c.WriteToUser("└────────────")
-	for i := 0; i < len(l.Name); i++ {
+	for i := 0; i < runeLen; i++ {
 		c.WriteToUser("─");
 	}
 	c.WriteToUser("─┘\n\r");
@@ -120,7 +121,7 @@ func (l *Level) GetRoomActionName(action Action) string {
 
 func (l *Level) CanDoAction(action Action, player Player) (bool, string) {
 	if len(action.Dependencies) == 0 {
-		return true, ""
+		return true, action.Answer
 	}
 
 	lastOkMessage := "";
