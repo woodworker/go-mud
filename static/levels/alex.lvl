@@ -1,6 +1,96 @@
 <station key="alex" tag="default">
     <name>Alexanderplatz</name>
     <directions>
-        <direction station="jannowitzbruecke">East</direction>
+        <direction>
+            <name>East</name>
+            <station>jannowitzbruecke</station>
+        </direction>
     </directions>
+    <asciimation>
+        <frame id="1" duration="300">
+            <line>   H</line>
+            <line>   M</line>
+            <line>   M</line>
+            <line>  / \</line>
+        </frame>
+        <frame id="2" duration="300">
+            <line>   H</line>
+            <line>   H</line>
+            <line>   M</line>
+            <line>   M</line>
+        </frame>
+        <frame id="3" duration="300">
+            <line>   H</line>
+            <line>   H</line>
+            <line>   H</line>
+            <line>   M</line>
+        </frame>
+        <frame id="4" duration="600">
+            <line>   H</line>
+            <line>   H</line>
+            <line>   H</line>
+            <line>   H</line>
+        </frame>
+        <frame id="5" duration="300">
+            <line>  (=) </line>
+            <line>   H</line>
+            <line>   H</line>
+            <line>   H</line>
+        </frame>
+        <frame id="5" duration="300">
+            <line>   # </line>
+            <line>  (=)</line>
+            <line>   H</line>
+            <line>   H</line>
+        </frame>
+        <frame id="6" duration="300">
+            <line>  (=) </line>
+            <line>   H </line>
+            <line>   H </line>
+            <line>   H </line>
+        </frame>
+        <frame id="7" duration="300">
+            <line>   | </line>
+            <line>   #</line>
+            <line>  (=)</line>
+            <line>   H</line>
+        </frame>
+        <frame id="8" duration="300">
+            <line>   | </line>
+            <line>   | </line>
+            <line>   # </line>
+            <line>  (=)</line>
+        </frame>
+        <frame id="9" duration="300">
+            <line>   | </line>
+            <line>   | </line>
+            <line>   | </line>
+            <line>   # </line>
+        </frame>
+        <frame id="10" duration="600">
+            <line>   . </line>
+            <line>   | </line>
+            <line>   | </line>
+            <line>   | </line>
+        </frame>
+        <frame id="11" duration="600">
+            <line>   o </line>
+            <line>   | </line>
+            <line>   | </line>
+            <line>   | </line>
+        </frame>
+        <frame id="12" duration="600">
+            <line>   . </line>
+            <line>   | </line>
+            <line>   | </line>
+            <line>   | </line>
+        </frame>
+        <frame id="13" duration="100">
+            <line>   |</line>
+            <line>   O</line>
+            <line>   |</line>
+            <line>   |</line>
+        </frame>
+    </asciimation>
+    <intro>Ahhhh, the TV-Tower</intro>
 </station>

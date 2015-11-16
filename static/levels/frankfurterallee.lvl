@@ -1,6 +1,9 @@
 <station key="frankfurterallee">
     <name>Frankfurter Allee</name>
     <directions>
-        <direction station="ostkreuz">South</direction>
+        <direction>
+            <name>South</name>
+            <station>ostkreuz</station>
+        </direction>
     </directions>
 </station>

@@ -2,7 +2,13 @@
     <name>A Door</name>
     <intro>At first it's just a simple door but when you come closer it looks more like a airlock</intro>
     <directions>
-        <direction station="cbase-mainhall">North</direction>
-        <direction station="cbase-rs20">South</direction>
+        <direction>
+            <name>North</name>
+            <station>cbase-mainhall</station>
+        </direction>
+        <direction>
+            <name>South</name>
+            <station>cbase-rs20</station>
+        </direction>
     </directions>
 </station>

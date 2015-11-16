@@ -1,8 +1,17 @@
 <station key="jannowitzbruecke-bridge">
-    <name>Jannowitz Bridge</name>
+    <name>Brückenstraße</name>
     <directions>
-        <direction station="china-restaurant">East</direction>
-        <direction station="jannowitzbruecke">North</direction>
-        <direction station="china-embassy">West</direction>
+        <direction>
+            <name>East</name>
+            <station>china-restaurant</station>
+        </direction>
+        <direction>
+            <name>North</name>
+            <station>jannowitzbruecke</station>
+        </direction>
+        <direction>
+            <name>West</name>
+            <station>china-embassy</station>
+        </direction>
     </directions>
 </station>

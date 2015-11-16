@@ -1,8 +1,18 @@
 <station key="china-embassy">
     <name>Chinese embassy</name>
-    <intro>There is a police officer, so dont look suspicious.</intro>
+    <intro>There is a police officer, so don't look suspicious.</intro>
     <directions>
-        <direction station="jannowitzbruecke-bridge">East</direction>
-        <direction station="embassy-manhole" hidden="1" dependency="cbase-clab:solder" failMsg="It's pretty dark down there">Down</direction>
+        <direction>
+            <name>East</name>
+            <station>jannowitzbruecke-bridge</station>
+        </direction>
+        <direction hidden="true">
+            <name>Down</name>
+            <station>embassy-manhole</station>
+            <dependency key="cbase-clab:solder">
+                <okMessage>This blinky thing lights this place up a bit.</okMessage>
+                <failMessage>It's pretty dark down there!</failMessage>
+            </dependency>
+        </direction>
     </directions>
 </station>

@@ -2,11 +2,23 @@
     <name>Jannowitzbrücke</name>
     <intro>Looks like you could do a little nerding here</intro>
     <directions>
-        <direction station="alex">West</direction>
-        <direction station="ostbahnhof">East</direction>
-        <direction station="jannowitzbruecke-bridge">South</direction>
+        <direction>
+            <name>West</name>
+            <station>alex</station>
+        </direction>
+        <direction>
+            <name>East</name>
+            <station>ostbahnhof</station>
+        </direction>
+        <direction>
+            <name>South</name>
+            <station>jannowitzbruecke-bridge</station>
+        </direction>
     </directions>
     <actions>
-        <action name="nerding">Maybe you want to visit c-base</action>
+        <action name="nerding">
+            <answer>Maybe you want to visit c-base,
+the spacestation below berlin.</answer>
+        </action>
     </actions>
 </station>

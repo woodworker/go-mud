@@ -2,9 +2,17 @@
     <name>c-lab</name>
     <intro>This looks like a nice little electronics lab, maybe solder something.</intro>
     <directions>
-        <direction station="cbase-weltenbaulabor">South</direction>
+        <direction>
+            <name>South</name>
+            <station>cbase-weltenbaulabor</station>
+        </direction>
     </directions>
     <actions>
-        <action name="solder" dependency="cbase-mainhall:nerding">You build a nice little blinky thingy</action>
+        <action name="solder">
+            <dependency key="cbase-mainhall:nerding">
+                <failMessage>You don't look nerdy enough.</failMessage>
+            </dependency>
+            <answer>You build a nice little blinky thingy</answer>
+        </action>
     </actions>
 </station>

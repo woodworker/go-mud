@@ -1,6 +1,9 @@
 <station key="rummelsburg">
     <name>Rummelsburg</name>
     <directions>
-        <direction station="ostkreuz">East</direction>
+        <direction>
+            <name>East</name>
+            <station>ostkreuz</station>
+        </direction>
     </directions>
 </station>

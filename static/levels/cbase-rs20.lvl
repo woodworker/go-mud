@@ -2,7 +2,13 @@
     <name>RS20</name>
     <intro>Looks like a normal building but there must be more</intro>
     <directions>
-        <direction station="cbase-door">North</direction>
-        <direction station="cbase-trees">West</direction>
+        <direction>
+            <name>North</name>
+            <station>cbase-door</station>
+        </direction>
+        <direction>
+            <name>West</name>
+            <station>cbase-trees</station>
+        </direction>
     </directions>
 </station>

@@ -2,13 +2,20 @@
     <name>Main hall</name>
     <intro>It looks like a movie set, but you are really at c-base the spacestation below berlin.</intro>
     <directions>
-        <direction station="cbase-door">South</direction>
-        <direction station="cbase-weltenbaulabor">Down</direction>
+        <direction>
+            <name>South</name>
+            <station>cbase-door</station>
+        </direction>
+        <direction>
+            <name>Down</name>
+            <station>cbase-weltenbaulabor</station>
+        </direction>
     </directions>
     <actions>
-        <action name="nerding" dependency="jannowitzbruecke:nerding">WOW, nerding arround in c-base, you are now part of the worldwide hackerspace community.
-Congratulations
-</action>
+        <action name="nerding">
+            <dependency key="jannowitzbruecke:nerding"></dependency>
+            <answer>WOW, nerding arround in c-base, you are now part of the worldwide hackerspace community. Congratulations!</answer>
+        </action>
     </actions>
     <asciimation>
         <frame id="1" duration="300">

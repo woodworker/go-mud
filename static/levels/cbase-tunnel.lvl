@@ -1,7 +1,13 @@
 <station key="cbase-tunnel">
     <name>Tunnel</name>
     <directions>
-        <direction station="embassy-manhole">West</direction>
-        <direction station="cbase-clab">East</direction>
+        <direction>
+            <name>West</name>
+            <station>embassy-manhole</station>
+        </direction>
+        <direction>
+            <name>East</name>
+            <station>cbase-clab</station>
+        </direction>
     </directions>
 </station>

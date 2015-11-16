@@ -2,10 +2,18 @@
     <name>Ostbahnhof</name>
     <intro>It seems that there is a Hackathon near by.</intro>
     <directions>
-        <direction station="jannowitzbruecke">West</direction>
-        <direction station="warschauerstr">East</direction>
+        <direction>
+            <name>West</name>
+            <station>jannowitzbruecke</station>
+        </direction>
+        <direction>
+            <name>East</name>
+            <station>warschauerstr</station>
+        </direction>
     </directions>
     <actions>
-        <action name="hack">Hi Berlin DevFest 2015!!!</action>
+        <action name="hack">
+            <answer>Hi Berlin DevFest 2015!!!</answer>
+        </action>
     </actions>
 </station>

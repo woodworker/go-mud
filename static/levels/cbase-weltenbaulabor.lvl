@@ -1,7 +1,13 @@
 <station key="cbase-weltenbaulabor">
     <name>Weltenbaulabor</name>
     <directions>
-        <direction station="cbase-clab">North</direction>
-        <direction station="cbase-mainhall">Up</direction>
+        <direction>
+            <name>North</name>
+            <station>cbase-clab</station>
+        </direction>
+        <direction>
+            <name>Up</name>
+            <station>cbase-mainhall</station>
+        </direction>
     </directions>
 </station>

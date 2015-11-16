@@ -1,4 +1,12 @@
-<player nickname="woodworker" position="ostbahnhof">
+<player nickname="woodworker" position="alex">
     <name>The Mighty WooDWorkeR</name>
     <type>Geek</type>
+    <actions>
+        <action>warschauerstr</action>
+        <action>ostbahnhof</action>
+        <action>jannowitzbruecke</action>
+        <action>jannowitzbruecke-bridge</action>
+        <action>china-embassy</action>
+        <action>alex</action>
+    </actions>
 </player>

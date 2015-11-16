@@ -1,7 +1,13 @@
 <station key="cbase-trees">
     <name>Trees</name>
     <directions>
-        <direction station="cbase-rs20">East</direction>
-        <direction station="china-restaurant">West</direction>
+        <direction>
+            <name>East</name>
+            <station>cbase-rs20</station>
+        </direction>
+        <direction>
+            <name>West</name>
+            <station>china-restaurant</station>
+        </direction>
     </directions>
 </station>
