@@ -21,6 +21,7 @@ var usernameTests = []struct {
 	{"afs_2-dfs", true},
 	{"afsdf324s", true},
 	{"$#%3", false},
+	{"../dsf", false},
 	{"", false},
 	{"päter", false},
 }
