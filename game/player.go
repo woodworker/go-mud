@@ -13,6 +13,12 @@ type Player struct {
 	PlayerType string      `xml:"type"`
 	Ch         chan string `xml:"-"`
 	ActionLog  []string    `xml:"actions>action"`
+	Attributes []Attribute `xml:"attributes>attribute"`
+}
+
+type Attribute struct {
+	name  string `xml:"name"`
+	value int64  `xml:"value"`
 }
 
 func (p *Player) LogAction(action string) {
@@ -28,4 +34,24 @@ func (p *Player) HasAction(action string) bool {
 		}
 	}
 	return false
+}
+
+func (p *Player) GetAttribute(name string) int64 {
+	for _, a := range p.Attributes {
+		if strings.ToLower(a.name) == strings.ToLower(name) {
+			return a.value
+		}
+	}
+	return 0
+}
+
+func (p *Player) UpdateAttribute(name string, update int64) {
+	for _, a := range p.Attributes {
+		if strings.ToLower(a.name) == strings.ToLower(name) {
+			a.value += update
+			if a.value <= 0 {
+				a.value = 0
+			}
+		}
+	}
 }
