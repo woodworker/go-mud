@@ -43,24 +43,27 @@ type Direction struct {
 
 type Dependency struct {
 	Key         string `xml:"key,attr"`
+	Type        string `xml:"type,attr"`
+	MinValue    int64  `xml:"minValue"`
+	MaxValue    int64  `xml:"MaxValue"`
 	OkMessage   string `xml:"okMessage"`
 	FailMessage string `xml:"failMessage"`
 }
 
 func (l *Level) OnEnterRoom(s *Server, c Client) {
 
-	c.WriteToUser("┌────────────");
+	c.WriteToUser("┌────────────")
 	runeLen := len([]rune(l.Name))
 	for i := 0; i < runeLen; i++ {
-		c.WriteToUser("─");
+		c.WriteToUser("─")
 	}
-	c.WriteToUser("─┐\n\r");
+	c.WriteToUser("─┐\n\r")
 	c.WriteLineToUser(fmt.Sprintf("│ You are at \033[1;30;41m%s\033[0m │", l.Name))
 	c.WriteToUser("└────────────")
 	for i := 0; i < runeLen; i++ {
-		c.WriteToUser("─");
+		c.WriteToUser("─")
 	}
-	c.WriteToUser("─┘\n\r");
+	c.WriteToUser("─┘\n\r")
 
 	if len(l.Asciimation.Frames) > 0 {
 		l.Asciimation.Play(c)
@@ -102,11 +105,10 @@ func (a *Asciimation) Play(c Client) {
 }
 
 func (l *Level) GetRoomAction(command string) (Action, bool) {
-
 	if len(l.Actions) > 0 {
 		for _, a := range l.Actions {
 			if a.Name == command {
-				log.Println(fmt.Sprintf("Found Action: %", a.Name))
+				log.Println(fmt.Sprintf("Found Action: %s", a.Name))
 				return a, true
 			}
 		}
@@ -120,22 +122,7 @@ func (l *Level) GetRoomActionName(action Action) string {
 }
 
 func (l *Level) CanDoAction(action Action, player Player) (bool, string) {
-	if len(action.Dependencies) == 0 {
-		return true, action.Answer
-	}
-
-	lastOkMessage := "";
-	for _, d := range action.Dependencies {
-		if !player.HasAction(d.Key) {
-			return false, d.FailMessage
-		} else {
-			lastOkMessage = d.OkMessage
-		}
-	}
-	if action.Answer != "" {
-		lastOkMessage = action.Answer
-	}
-	return true, lastOkMessage
+	return CheckDependencies(action.Dependencies, player, action.Answer)
 }
 
 func (l *Level) CanSeeDirection(direction Direction, player Player, viewDirection string) bool {
@@ -152,14 +139,39 @@ func (l *Level) CanSeeDirection(direction Direction, player Player, viewDirectio
 }
 
 func (l *Level) CanGoDirection(direction Direction, player Player) (bool, string) {
-	if len(direction.Dependencies) == 0 {
-		return true, ""
+	return CheckDependencies(direction.Dependencies, player, "")
+}
+
+func CheckDependencies(dependencies []Dependency, player Player, defaultAnswer string) (bool, string) {
+	if len(dependencies) == 0 {
+		return true, defaultAnswer
 	}
 
-	for _, d := range direction.Dependencies {
-		if !player.HasAction(d.Key) {
-			return false, d.FailMessage
+	lastOkMessage := ""
+	for _, d := range dependencies {
+		if d.Type == "" || d.Type == "action" {
+			if !player.HasAction(d.Key) {
+				return false, d.FailMessage
+			}
+
+			lastOkMessage = d.OkMessage
+		}
+		if d.Type == "attribute" {
+			playerAttribute := player.GetAttribute(d.Key)
+
+			if d.MinValue != 0 && playerAttribute < d.MinValue {
+				return false, d.FailMessage
+			}
+
+			if d.MaxValue != 0 && playerAttribute > d.MaxValue {
+				return false, d.FailMessage
+			}
+
+			lastOkMessage = d.OkMessage
 		}
 	}
-	return true, ""
+	if defaultAnswer != "" {
+		lastOkMessage = defaultAnswer
+	}
+	return true, lastOkMessage
 }
