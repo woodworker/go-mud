@@ -1,4 +1,6 @@
 language: go
+go:
+  - 1.5
 script: go test ./game
 notifications:
   email: false
