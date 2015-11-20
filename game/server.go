@@ -7,14 +7,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 type Server struct {
-	name         string
 	players      map[string]Player
 	levels       map[string]Level
 	workingdir   string
-	defaultLevel Level
+	DefaultLevel Level
 	Config       ServerConfig
 }
 
@@ -25,7 +25,7 @@ type ServerConfig struct {
 }
 
 func (s *Server) HasDefaultLevel() bool {
-	return s.defaultLevel.Key != ""
+	return s.DefaultLevel.Key != ""
 }
 
 func NewServer(serverdir string) *Server {
@@ -90,13 +90,29 @@ func (s *Server) LoadLevels() error {
 	return filepath.Walk(s.workingdir+"/static/levels/", levelWalker)
 }
 
-func (s *Server) getPlayerFileName(playerName string) string {
-	return s.workingdir + "/static/player/" + playerName + ".player"
+func (s *Server) getPlayerFileName(playerName string) (bool, string) {
+	if !s.IsValidUsername(playerName) {
+		return false, ""
+	}
+	return true, s.workingdir + "/static/player/" + playerName + ".player"
+}
+
+func (s *Server) IsValidUsername(playerName string) bool {
+	r, err := regexp.Compile(`^[a-zA-Z0-9_-]{1,40}$`)
+	if err != nil {
+		return false
+	}
+	if !r.MatchString(playerName) {
+		return false
+	}
+	return true
 }
 
 func (s *Server) LoadPlayer(playerName string) bool {
-	playerFileName := s.getPlayerFileName(playerName)
-
+	ok, playerFileName := s.getPlayerFileName(playerName)
+	if !ok {
+		return false
+	}
 	log.Println("Loading player %s", playerFileName)
 
 	fileContent, fileIoErr := ioutil.ReadFile(playerFileName)
@@ -151,7 +167,10 @@ func (s *Server) GetName() string {
 }
 
 func (s *Server) CreatePlayer(nick string, name string, playerType string) {
-	playerFileName := s.getPlayerFileName(nick)
+	ok, playerFileName := s.getPlayerFileName(nick)
+	if !ok {
+		return
+	}
 	if _, err := os.Stat(playerFileName); err == nil {
 		s.LoadPlayer(nick)
 		fmt.Printf("Player %s does already exists", nick)
@@ -169,7 +188,11 @@ func (s *Server) CreatePlayer(nick string, name string, playerType string) {
 func (s *Server) SavePlayer(player Player) bool {
 	data, err := xml.MarshalIndent(player, "", "    ")
 	if err == nil {
-		playerFileName := s.getPlayerFileName(player.Nickname)
+		ok, playerFileName := s.getPlayerFileName(player.Nickname)
+		if !ok {
+			return false
+		}
+
 		if ioerror := ioutil.WriteFile(playerFileName, data, 0666); ioerror != nil {
 			log.Println(ioerror)
 			return true
