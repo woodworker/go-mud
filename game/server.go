@@ -141,7 +141,7 @@ func (s *Server) LoadPlayer(playerName string) bool {
 func (s *Server) addLevel(level Level) error {
 	if level.Tag == "default" {
 		log.Printf("default level loaded: %s\n", level.Key)
-		s.defaultLevel = level
+		s.DefaultLevel = level
 	}
 	s.levels[level.Key] = level
 	return nil
@@ -180,7 +180,7 @@ func (s *Server) CreatePlayer(nick string, name string, playerType string) {
 		Gamename:   name,
 		Nickname:   nick,
 		PlayerType: playerType,
-		Position:   s.defaultLevel.Key,
+		Position:   s.DefaultLevel.Key,
 	}
 	s.addPlayer(player)
 }
