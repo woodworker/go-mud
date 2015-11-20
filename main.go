@@ -75,11 +75,25 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 	io.WriteString(c, server.Config.Motd)
 
 	var nickname string
+	questions := 0
 	for {
+		if questions >= 3 {
+			io.WriteString(c, "See you\n\r")
+			return
+		}
+
 		nickname = promptMessage(c, bufc, "Whats your Nick?\n\r  ")
+		isValidName := server.IsValidUsername(nickname);
+		if !isValidName {
+			questions++
+			io.WriteString(c, fmt.Sprintf("Username %s is not valid (0-9a-z_-).\n\r", nickname))
+			continue
+		}
+
 		ok := server.LoadPlayer(nickname)
 
 		if ok == false {
+			questions++
 			io.WriteString(c, fmt.Sprintf("Username %s does not exists.\n\r", nickname))
 			answer := promptMessage(c, bufc, "Do you want to create that user? [y|n] ")
 
