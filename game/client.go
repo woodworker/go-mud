@@ -108,6 +108,19 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 		case "exit":
 			server.OnExit(c)
 			c.Conn.Close()
+		case "help":
+			c.WriteLineToUser("┌─>")
+			c.WriteLineToUser(fmt.Sprintf("│ %s Help", server.Config.Name))
+			c.WriteLineToUser("│")
+			c.WriteLineToUser("│ Commands:")
+			c.WriteLineToUser("│  * look|watch        look arround you")
+			c.WriteLineToUser("│  * go                go into a specific direction")
+			c.WriteLineToUser("│  * say               say something to the persons near you")
+			c.WriteLineToUser("│  * quit|leave|exit   leave the server")
+			c.WriteLineToUser("│")
+			c.WriteLineToUser("│  * there can always be room specific commands")
+			c.WriteLineToUser("└─>")
+
 		default:
 			place, gotRoom := server.GetRoom(c.Player.Position)
 			if gotRoom {
@@ -115,7 +128,7 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 				if gotRoomAction {
 					isAllowed, message := place.CanDoAction(action, c.Player)
 					if message != "" {
-						lines := strings.Split(message,"\n")
+						lines := strings.Split(message, "\n")
 						for _, line := range lines {
 							c.WriteLineToUser(fmt.Sprintf(" > %s", line))
 						}
