@@ -1,5 +1,6 @@
 <station key="alex" tag="default">
     <name>Alexanderplatz</name>
+    <intro>Ahhhh, the TV-Tower</intro>
     <directions>
         <direction>
             <name>East</name>
@@ -92,5 +93,4 @@
             <line>   |</line>
         </frame>
     </asciimation>
-    <intro>Ahhhh, the TV-Tower</intro>
 </station>

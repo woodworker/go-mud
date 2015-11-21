@@ -1,0 +1,74 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="station">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="name"/>
+                <xs:element type="xs:string" name="intro" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="directions" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="direction" maxOccurs="unbounded" minOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="name"/>
+                                        <xs:element type="xs:string" name="station"/>
+                                        <xs:element name="dependency" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element type="xs:string" name="okMessage" minOccurs="0" maxOccurs="1"/>
+                                                    <xs:element type="xs:string" name="failMessage" minOccurs="0" maxOccurs="1"/>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="key"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:boolean" name="hidden" use="optional"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="asciimation" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="frame" maxOccurs="unbounded" minOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="line" maxOccurs="unbounded" minOccurs="0"/>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:byte" name="id" use="optional"/>
+                                    <xs:attribute type="xs:short" name="duration" use="optional"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="actions" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="action" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="dependency" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element type="xs:string" name="failMessage" minOccurs="0" maxOccurs="1"/>
+                                                    <xs:element type="xs:string" name="okMessage" minOccurs="0" maxOccurs="1"/>
+                                                </xs:sequence>
+                                                <xs:attribute type="xs:string" name="key"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element type="xs:string" name="answer"/>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:string" name="name"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="key"/>
+            <xs:attribute type="xs:string" name="tag"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
