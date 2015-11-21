@@ -17,8 +17,8 @@ type Player struct {
 }
 
 type Attribute struct {
-	name  string `xml:"name"`
-	value int64  `xml:"value"`
+	Name   string   `xml:"name,attr"`
+	Value  int64    `xml:"value"`
 }
 
 func (p *Player) LogAction(action string) {
@@ -38,20 +38,26 @@ func (p *Player) HasAction(action string) bool {
 
 func (p *Player) GetAttribute(name string) int64 {
 	for _, a := range p.Attributes {
-		if strings.ToLower(a.name) == strings.ToLower(name) {
-			return a.value
+		if strings.ToLower(a.Name) == strings.ToLower(name) {
+			return a.Value
 		}
 	}
 	return 0
 }
 
 func (p *Player) UpdateAttribute(name string, update int64) {
-	for _, a := range p.Attributes {
-		if strings.ToLower(a.name) == strings.ToLower(name) {
-			a.value += update
-			if a.value <= 0 {
-				a.value = 0
+	for i := range p.Attributes {
+		if strings.ToLower(p.Attributes[i].Name) == strings.ToLower(name) {
+			p.Attributes[i].Value = p.Attributes[i].Value + update
+			if p.Attributes[i].Value <= 0 {
+				p.Attributes[i].Value = 0
 			}
+			return
 		}
 	}
+
+	p.Attributes = append(p.Attributes, Attribute{
+		Name: name,
+		Value: update,
+	})
 }
