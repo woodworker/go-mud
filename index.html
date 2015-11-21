@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>Go-mud by woodworker</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Go-mud</h1>
+        <h2>Go based MUD Server</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/woodworker/go-mud/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/woodworker/go-mud/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/woodworker/go-mud" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a id="multi-user-dungeon-server" class="anchor" href="#multi-user-dungeon-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multi User Dungeon Server</h1>
+
+<p>This MUD server started as a hackathon project at the Berlin Google DevFest 2013 which hat
+the topic "Retro" so i thought a MUD Server that is using XML as config is pretty retro.</p>
+
+<p>The 2015 edition of Berlin Google DevFest was coming and the topic "ASCII" was a easy
+pick for me and so i worked again on the MUD Server</p>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<p>At first the feature that is not existent: password protection, just a username and you are in.</p>
+
+<h3>
+<a id="rooms" class="anchor" href="#rooms" aria-hidden="true"><span class="octicon octicon-link"></span></a>Rooms</h3>
+
+<p>All levels/rooms/area are defined by a XML files per room, so you can merge different "worlds"
+by just copying all the files in to one folder and create a connecting room</p>
+
+<p>All the room need to have a unique key by whom they are identified by the server. These keys
+are also used for directions.</p>
+
+<h3>
+<a id="directions" class="anchor" href="#directions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Directions</h3>
+
+<p>Directions can have a free form name which must be unique per room and need to to have
+a key of an existing room. They can also be hidden and only be seen when the look command
+will be called with the direction name. You should give hints to find them.
+Directions can also have one or multiple dependencies.</p>
+
+<h3>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dependencies</h3>
+
+<p>The dependency system in Go-MUD is based on multiple things such as places you visit,
+actions you did there and attributes you have and their value.
+At the moment actions and directions can be marked with dependencies.
+Later this will be extended with the not yet build inventory system.</p>
+
+<h3>
+<a id="attributes" class="anchor" href="#attributes" aria-hidden="true"><span class="octicon octicon-link"></span></a>Attributes</h3>
+
+<p>Attributes can be used as dependency for rooms, there they can be used and Min and/or Max value
+filters.</p>
+
+<h3>
+<a id="actions" class="anchor" href="#actions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actions</h3>
+
+<p>Rooms can have multiple action which you can perform there. These actions can have and be in it self dependencies for other actions or rooms</p>
+
+<h2>
+<a id="future-work" class="anchor" href="#future-work" aria-hidden="true"><span class="octicon octicon-link"></span></a>Future Work</h2>
+
+<p>Here all future ideas for Go-Mud will be listed, if you have a cool idea just add a <a href="https://github.com/woodworker/go-mud/issues">"enhancement" issue</a></p>
+
+<h3>
+<a id="inventory" class="anchor" href="#inventory" aria-hidden="true"><span class="octicon octicon-link"></span></a>Inventory</h3>
+
+<p>There should also be an inventory system for players and also containers in rooms that can be lootet
+and also be used as storage when the player inventory is full</p>
+
+<h3>
+<a id="scripting" class="anchor" href="#scripting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scripting</h3>
+
+<p>Some sort of scripting language maybe based on Lua or EcmaScript</p>
+
+<h3>
+<a id="plugins" class="anchor" href="#plugins" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plugins</h3>
+
+<p>Plugins for when simple scripts are not enough</p>
+
+<h1>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
+
+<p><a href="https://github.com/woodworker" class="user-mention">@woodworker</a></p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
