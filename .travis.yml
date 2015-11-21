@@ -1,6 +1,13 @@
 language: go
 go:
   - 1.5
-script: go test ./game
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libxml2-utils
+install:
+  - echo 1
+script:
+  - xmllint --schema ./static/level.xsd ./static/levels/*.lvl
+  - go test ./game
 notifications:
   email: false
