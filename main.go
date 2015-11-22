@@ -74,6 +74,8 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 	io.WriteString(c, fmt.Sprintf("\033[1;30;41mWelcome to \"%s\" Go-MUD Server!\033[0m\n\r", server.GetName()))
 	io.WriteString(c, server.Config.Motd)
 
+	initialConnection := false
+
 	var nickname string
 	questions := 0
 	for {
@@ -102,6 +104,7 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 				playerType := promptMessage(c, bufc, "Please enter your character type: ")
 
 				server.CreatePlayer(nickname, gameName, playerType)
+				initialConnection = true
 				break
 			}
 		}
@@ -139,6 +142,9 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- game.Cli
 	location, locationLoaded := server.GetRoom(client.Player.Position)
 
 	if locationLoaded {
+		if initialConnection {
+			client.WriteHelp(server)
+		}
 		location.OnEnterRoom(server, client)
 	}
 

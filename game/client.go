@@ -109,18 +109,7 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 			server.OnExit(c)
 			c.Conn.Close()
 		case "help":
-			c.WriteLineToUser("┌─>")
-			c.WriteLineToUser(fmt.Sprintf("│ %s Help", server.Config.Name))
-			c.WriteLineToUser("│")
-			c.WriteLineToUser("│ Commands:")
-			c.WriteLineToUser("│  * look|watch        look arround you")
-			c.WriteLineToUser("│  * go                go into a specific direction")
-			c.WriteLineToUser("│  * say               say something to the persons near you")
-			c.WriteLineToUser("│  * quit|leave|exit   leave the server")
-			c.WriteLineToUser("│")
-			c.WriteLineToUser("│  * there can always be room specific commands")
-			c.WriteLineToUser("└─>")
-
+			c.WriteHelp(server)
 		default:
 			place, gotRoom := server.GetRoom(c.Player.Position)
 			if gotRoom {
@@ -144,6 +133,20 @@ func (c Client) ReadLinesInto(ch chan<- string, server *Server) {
 			c.WriteToUser("\033[1F\033[K")
 		}
 	}
+}
+
+func (c Client) WriteHelp(server *Server) {
+	c.WriteLineToUser("┌─>")
+	c.WriteLineToUser(fmt.Sprintf("│ %s Help", server.Config.Name))
+	c.WriteLineToUser("│")
+	c.WriteLineToUser("│ Commands:")
+	c.WriteLineToUser("│  * look|watch        look arround you")
+	c.WriteLineToUser("│  * go                go into a specific direction")
+	c.WriteLineToUser("│  * say               say something to the persons near you")
+	c.WriteLineToUser("│  * quit|leave|exit   leave the server")
+	c.WriteLineToUser("│")
+	c.WriteLineToUser("│  * there can always be room specific commands")
+	c.WriteLineToUser("└─>")
 }
 
 func (c Client) WriteLinesFrom(ch <-chan string) {
