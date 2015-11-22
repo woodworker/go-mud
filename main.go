@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"./game"
+	"github.com/woodworker/go-mud/game"
 )
 
 func main() {

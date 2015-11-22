@@ -4,10 +4,8 @@ go:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -y libxml2-utils
-install:
-  - echo 1
 script:
   - xmllint --schema ./static/level.xsd ./static/levels/*.lvl
-  - go test ./game
+  - go test ./...
 notifications:
   email: false
