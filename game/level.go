@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 	"time"
+	"strconv"
 )
 
 type Level struct {
@@ -44,8 +45,8 @@ type Direction struct {
 type Dependency struct {
 	Key         string `xml:"key,attr"`
 	Type        string `xml:"type,attr"`
-	MinValue    int64  `xml:"minValue"`
-	MaxValue    int64  `xml:"MaxValue"`
+	MinValue    string `xml:"minValue"`
+	MaxValue    string `xml:"maxValue"`
 	OkMessage   string `xml:"okMessage"`
 	FailMessage string `xml:"failMessage"`
 }
@@ -149,25 +150,61 @@ func CheckDependencies(dependencies []Dependency, player Player, defaultAnswer s
 
 	lastOkMessage := ""
 	for _, d := range dependencies {
-		if d.Type == "" || d.Type == "action" {
+		switch d.Type {
+		case "":
+			fallthrough
+		case "action":
 			if !player.HasAction(d.Key) {
 				return false, d.FailMessage
 			}
 
 			lastOkMessage = d.OkMessage
-		}
-		if d.Type == "attribute" {
+		case "attribute":
 			playerAttribute := player.GetAttribute(d.Key)
 
-			if d.MinValue != 0 && playerAttribute < d.MinValue {
+			minValue, errMin := strconv.ParseInt(d.MinValue, 10, 64)
+			if errMin==nil && d.MinValue != "" && playerAttribute < minValue {
 				return false, d.FailMessage
 			}
 
-			if d.MaxValue != 0 && playerAttribute > d.MaxValue {
+			maxValue, errMax := strconv.ParseInt(d.MinValue, 10, 64)
+			if errMax==nil && d.MaxValue != "" && playerAttribute > maxValue {
 				return false, d.FailMessage
 			}
 
 			lastOkMessage = d.OkMessage
+		case "time":
+			if strings.Count(d.MinValue, ":")==1 && strings.Count(d.MaxValue, ":")==1 {
+				minParts := strings.SplitN(d.MinValue, ":", 2)
+				maxParts := strings.SplitN(d.MaxValue, ":", 2)
+
+				nowHour := int64(time.Now().Hour());
+				nowMinute := int64(time.Now().Minute())
+
+				minHour, minHourErr := strconv.ParseInt(minParts[0], 10, 64)
+				minMinute, minMinuteErr := strconv.ParseInt(minParts[1], 10, 64)
+
+				if minHourErr != nil || minMinuteErr != nil || minHour > 23 || minMinute > 59 {
+					return false, d.FailMessage
+				}
+
+				if minHour > nowHour || (minHour == nowHour && minMinute > nowMinute) {
+					return false, d.FailMessage
+				}
+
+				maxHour, maxHourErr := strconv.ParseInt(maxParts[0], 10, 64)
+				maxMinute, maxMinuteErr := strconv.ParseInt(maxParts[1], 10, 64)
+
+				if maxHourErr != nil || maxMinuteErr != nil || maxHour > 23 || maxMinute > 59 {
+					return false, d.FailMessage
+				}
+
+				if maxHour < nowHour || (maxHour == nowHour && maxMinute < nowMinute) {
+					return false, d.FailMessage
+				}
+				return true, d.OkMessage
+			}
+			return false, d.FailMessage
 		}
 	}
 	if defaultAnswer != "" {

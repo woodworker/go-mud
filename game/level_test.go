@@ -2,6 +2,7 @@ package game
 
 import (
 	"testing"
+	"time"
 )
 
 func MakeTestLevel(name string, tag string) Level {
@@ -135,8 +136,8 @@ func TestCheckDependenciesAttribute(t *testing.T) {
 	dependency := Dependency{
 		Key:"test",
 		Type:"attribute",
-		MinValue:10,
-		MaxValue:15,
+		MinValue:"10",
+		MaxValue:"15",
 		OkMessage:"OK",
 		FailMessage:"FAIL",
 	}
@@ -175,6 +176,57 @@ func TestCheckDependenciesAttribute(t *testing.T) {
 	}
 	if msg != "FAIL" {
 		t.Error("Should get FAIL as message")
+	}
+}
+
+
+var timeTests = []struct {
+	min  string
+	max  string
+	out bool
+}{
+	{"00:00", "23:59", true},
+	{"24:00", "23:59", false},
+	{"00:00", "24:59", false},
+	{"00:00", "23:60", false},
+	{"00:60", "23:59", false},
+	{"ABC", "CDE", false},
+}
+
+func TestCheckDependenciesTime(t *testing.T) {
+	p := Player{}
+
+	inOneMinute := time.Now().Add(time.Duration(1) * time.Minute)
+	timeTests = append(timeTests, struct {
+		min  string
+		max  string
+		out bool
+	}{inOneMinute.Format("15:04"), "23:59", false});
+
+	beforeOneMinute := time.Now().Add(time.Duration(-1) * time.Minute)
+	timeTests = append(timeTests, struct {
+		min  string
+		max  string
+		out bool
+	}{"00:00", beforeOneMinute.Format("15:04"), false});
+
+	for _, tt := range timeTests {
+
+		dependency := Dependency{
+			Key:"test",
+			Type:"time",
+			MinValue:tt.min,
+			MaxValue:tt.max,
+			OkMessage:"OK",
+			FailMessage:"FAIL",
+		}
+		var dependencies []Dependency
+		dependencies = append(dependencies, dependency)
+
+		ok, _ := CheckDependencies(dependencies, p, "YES")
+		if ok != tt.out {
+			t.Errorf("tests for time %q - %q failed, should be %v", tt.min, tt.max, tt.out )
+		}
 	}
 }
 
