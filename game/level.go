@@ -205,6 +205,24 @@ func CheckDependencies(dependencies []Dependency, player Player, defaultAnswer s
 				return true, d.OkMessage
 			}
 			return false, d.FailMessage
+		case "date":
+			from, fromError := time.Parse("2006-01-02 15:04:05", d.MinValue+" 00:00:00")
+			to, toError := time.Parse("2006-01-02 15:04:05", d.MaxValue+" 23:59:59")
+			now := time.Now();
+			if (fromError == nil && toError == nil) {
+				diffFrom := now.Sub(from)
+				diffTo := to.Sub(now)
+
+				if diffFrom.Seconds() < 0 {
+					return false, d.FailMessage
+				}
+				if diffTo.Seconds() < 0 {
+					return false, d.FailMessage
+				}
+				return true, d.OkMessage
+			} else {
+				return false, d.FailMessage
+			}
 		}
 	}
 	if defaultAnswer != "" {

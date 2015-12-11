@@ -210,11 +210,82 @@ func TestCheckDependenciesTime(t *testing.T) {
 		out bool
 	}{"00:00", beforeOneMinute.Format("15:04"), false});
 
+	timeTests = append(timeTests, struct {
+		min  string
+		max  string
+		out bool
+	}{beforeOneMinute.Format("15:04"), inOneMinute.Format("15:04"), true});
+
+	timeTests = append(timeTests, struct {
+		min  string
+		max  string
+		out bool
+	}{time.Now().Format("15:04"), time.Now().Format("15:04"), true});
+
 	for _, tt := range timeTests {
 
 		dependency := Dependency{
 			Key:"test",
 			Type:"time",
+			MinValue:tt.min,
+			MaxValue:tt.max,
+			OkMessage:"OK",
+			FailMessage:"FAIL",
+		}
+		var dependencies []Dependency
+		dependencies = append(dependencies, dependency)
+
+		ok, _ := CheckDependencies(dependencies, p, "YES")
+		if ok != tt.out {
+			t.Errorf("tests for time %q - %q failed, should be %v", tt.min, tt.max, tt.out )
+		}
+	}
+}
+
+var dateTests = []struct {
+	min  string
+	max  string
+	out bool
+}{
+	{"2014-01-01", "2020-12-31", true},
+	{"2010-01-01", "2011-01-01", false},
+	{"ABC", "CDE", false},
+}
+
+func TestCheckDependenciesDate(t *testing.T) {
+	p := Player{}
+
+	inOneDay := time.Now().Add(time.Duration(24) * time.Hour)
+	dateTests = append(dateTests, struct {
+		min  string
+		max  string
+		out bool
+	}{inOneDay.Format("2006-01-02"), "2020-12-31", false});
+
+	beforeOneDay := time.Now().Add(time.Duration(-24) * time.Hour)
+	dateTests = append(dateTests, struct {
+		min  string
+		max  string
+		out bool
+	}{"2000-01-01", beforeOneDay.Format("2006-01-02"), false});
+
+	dateTests = append(dateTests, struct {
+		min  string
+		max  string
+		out bool
+	}{beforeOneDay.Format("2006-01-02"), inOneDay.Format("2006-01-02"), true});
+
+	dateTests = append(dateTests, struct {
+		min  string
+		max  string
+		out bool
+	}{time.Now().Format("2006-01-02"), time.Now().Format("2006-01-02"), true});
+
+	for _, tt := range dateTests {
+
+		dependency := Dependency{
+			Key:"test",
+			Type:"date",
 			MinValue:tt.min,
 			MaxValue:tt.max,
 			OkMessage:"OK",
