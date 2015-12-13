@@ -14,8 +14,14 @@ type Level struct {
 	Name        string      `xml:"name"`
 	Directions  []Direction `xml:"directions>direction"`
 	Actions     []Action    `xml:"actions>action"`
+	Messages    []Message   `xml:"messages>message"`
 	Intro       string      `xml:"intro"`
 	Asciimation Asciimation `xml:"asciimation"`
+}
+
+type Message struct {
+	Text         string       `xml:"text"`
+	Dependencies []Dependency `xml:"dependency"`
 }
 
 type Asciimation struct {
@@ -72,6 +78,19 @@ func (l *Level) OnEnterRoom(s *Server, c Client) {
 
 	if l.Intro != "" {
 		c.WriteToUser(fmt.Sprintf(" > %s\n\r", l.Intro))
+	}
+
+	if len(l.Messages) > 0 {
+		for _, m := range l.Messages {
+			if len(m.Dependencies) > 0 {
+				ok, _ := CheckDependencies(m.Dependencies, c.Player, "")
+				if ok {
+					c.WriteToUser(fmt.Sprintf(" > %s\n\r", m.Text))
+				}
+			} else {
+				c.WriteToUser(fmt.Sprintf(" > %s\n\r", m.Text))
+			}
+		}
 	}
 }
 

@@ -1,6 +1,12 @@
 <station key="china-embassy">
     <name>Chinese embassy</name>
     <intro>There is a police officer, so don't look suspicious.</intro>
+    <messages>
+        <message>
+            <text>Your blinky thing should be bright enough to go in the underground</text>
+            <dependency key="cbase-clab:solder"/>
+        </message>
+    </messages>
     <directions>
         <direction>
             <name>East</name>

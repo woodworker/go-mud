@@ -1,9 +1,32 @@
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:complexType name="dependency">
+        <xs:sequence>
+            <xs:element type="xs:string" name="okMessage" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:string" name="failMessage" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:string" name="minValue" minOccurs="0" maxOccurs="1"/>
+            <xs:element type="xs:string" name="maxValue" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="key"/>
+    </xs:complexType>
     <xs:element name="station">
         <xs:complexType>
             <xs:sequence>
                 <xs:element type="xs:string" name="name"/>
                 <xs:element type="xs:string" name="intro" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="messages" minOccurs="0" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="message" minOccurs="1" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="text"/>
+                                        <xs:element name="dependency" minOccurs="0" maxOccurs="unbounded" type="dependency"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
                 <xs:element name="directions" minOccurs="1" maxOccurs="1">
                     <xs:complexType>
                         <xs:sequence>
@@ -12,17 +35,7 @@
                                     <xs:sequence>
                                         <xs:element type="xs:string" name="name"/>
                                         <xs:element type="xs:string" name="station"/>
-                                        <xs:element name="dependency" minOccurs="0" maxOccurs="unbounded">
-                                            <xs:complexType>
-                                                <xs:sequence>
-                                                    <xs:element type="xs:string" name="okMessage" minOccurs="0" maxOccurs="1"/>
-                                                    <xs:element type="xs:string" name="failMessage" minOccurs="0" maxOccurs="1"/>
-                                                    <xs:element type="xs:string" name="minValue" minOccurs="0" maxOccurs="1"/>
-                                                    <xs:element type="xs:string" name="maxValue" minOccurs="0" maxOccurs="1"/>
-                                                </xs:sequence>
-                                                <xs:attribute type="xs:string" name="key"/>
-                                            </xs:complexType>
-                                        </xs:element>
+                                        <xs:element name="dependency" minOccurs="0" maxOccurs="unbounded" type="dependency"/>
                                     </xs:sequence>
                                     <xs:attribute type="xs:boolean" name="hidden" use="optional"/>
                                 </xs:complexType>
@@ -51,17 +64,7 @@
                             <xs:element name="action" maxOccurs="unbounded" minOccurs="0">
                                 <xs:complexType>
                                     <xs:sequence>
-                                        <xs:element name="dependency" minOccurs="0" maxOccurs="unbounded">
-                                            <xs:complexType>
-                                                <xs:sequence>
-                                                    <xs:element type="xs:string" name="failMessage" minOccurs="0" maxOccurs="1"/>
-                                                    <xs:element type="xs:string" name="okMessage" minOccurs="0" maxOccurs="1"/>
-                                                    <xs:element type="xs:string" name="minValue" minOccurs="0" maxOccurs="1"/>
-                                                    <xs:element type="xs:string" name="maxValue" minOccurs="0" maxOccurs="1"/>
-                                                </xs:sequence>
-                                                <xs:attribute type="xs:string" name="key"/>
-                                            </xs:complexType>
-                                        </xs:element>
+                                        <xs:element name="dependency" minOccurs="0" maxOccurs="unbounded" type="dependency"/>
                                         <xs:element type="xs:string" name="answer"/>
                                     </xs:sequence>
                                     <xs:attribute type="xs:string" name="name"/>
